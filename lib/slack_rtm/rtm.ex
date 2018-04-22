@@ -28,8 +28,14 @@ defmodule SlackRtm.Rtm do
   end
 
   def loop(websocket) do
-    message = websocket |> Socket.Web.recv!
-    IO.puts "**** got message: #{inspect message} ****"
+    case Socket.Web.recv!(websocket) do
+      {:ping, _} ->
+        IO.puts "**** got ping ****"
+        websocket |> Socket.Web.send!({:pong, ""})
+      message ->
+        IO.puts "**** got message: #{inspect message} ****"
+    end
+
     loop(websocket)
   end
 end
