@@ -5,11 +5,15 @@ defmodule SlackRtm.Application do
 
   use Application
 
-  def start(_type, _args) do
+  def start(_type, [token]) do
+    import Supervisor.Spec, warn: false
     # List all child processes to be supervised
     children = [
-      # Starts a worker by calling: SlackRtm.Worker.start_link(arg)
-      # {SlackRtm.Worker, arg},
+      %{
+        id: SlackRtm.Rtm,
+        start: { SlackRtm.Rtm, :start, [[token]]}
+      },
+      # worker(SlackRtm.Rtm, token),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

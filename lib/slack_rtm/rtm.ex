@@ -1,15 +1,15 @@
 defmodule SlackRtm.Rtm do
-  def connect! do
-    case authenticate() do
-      {:ok, %{"url" => url}} -> {:ok, URI.parse(url) |> websocket_connect!}
-      {:error, message} -> {:error, message}
-    end
+  def start([token]) do
+    {:ok, ws} = connect!(token)
+    pid = spawn_link(fn -> loop(ws) end)
+    Process.register pid, :websocket
+    {:ok, pid}
   end
 
-  def authenticate do
-    case find_slack_token() do
-      nil -> {:error, "Failed to find Slack token"}
-      token -> authenticate(token)
+  def connect!(token) do
+    case authenticate(token) do
+      {:ok, %{"url" => url}} -> {:ok, url |> websocket_connect!}
+      {:error, message} -> {:error, message}
     end
   end
 
@@ -23,11 +23,13 @@ defmodule SlackRtm.Rtm do
     end
   end
 
-  def find_slack_token do
-    System.get_env("SLACK_TOKEN")
+  def websocket_connect!(uri) do
+    Socket.connect!(uri)
   end
 
-  def websocket_connect!(uri) do
-    Socket.Web.connect! uri.host, secure: true, path: uri.path
+  def loop(websocket) do
+    message = websocket |> Socket.Web.recv!
+    IO.puts "**** got message: #{inspect message} ****"
+    loop(websocket)
   end
 end
