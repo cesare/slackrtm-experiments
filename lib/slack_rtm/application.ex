@@ -9,11 +9,7 @@ defmodule SlackRtm.Application do
     import Supervisor.Spec, warn: false
     # List all child processes to be supervised
     children = [
-      %{
-        id: SlackRtm.Rtm,
-        start: { SlackRtm.Rtm, :start, [[token]]}
-      },
-      # worker(SlackRtm.Rtm, token),
+      worker(SlackRtm.Rtm, [token]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

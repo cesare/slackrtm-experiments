@@ -1,9 +1,23 @@
 defmodule SlackRtm.Rtm do
-  def start([token]) do
+  use GenServer
+
+  def start_link(token) do
+    GenServer.start_link(__MODULE__, token, name: __MODULE__)
+  end
+
+  def init(token) do
     {:ok, ws} = connect!(token)
-    pid = spawn_link(fn -> loop(ws) end)
-    Process.register pid, :websocket
-    {:ok, pid}
+    spawn_link(SlackRtm.Listener, :init, [ws])
+    {:ok, ws}
+  end
+
+  def send_message(message) do
+    GenServer.cast(__MODULE__, {:send, message})
+  end
+
+  def handle_cast({:send, message}, websocket) do
+    # websocket |> Socket.Web.send!({:text, message})
+    {:noreply, websocket}
   end
 
   def connect!(token) do
