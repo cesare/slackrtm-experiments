@@ -10,6 +10,7 @@ defmodule SlackRtm.Application do
     # List all child processes to be supervised
     children = [
       worker(SlackRtm.Rtm, [token]),
+      worker(SlackRtm.Channels, [token]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

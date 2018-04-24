@@ -1,4 +1,31 @@
 defmodule SlackRtm.Channels do
+  use GenServer
+
+  def start_link(token) do
+    GenServer.start_link(__MODULE__, token, name: __MODULE__)
+  end
+
+  def init(token) do
+    {:ok, {token}}
+  end
+
+  def find_channel(channel_name) do
+    case GenServer.call __MODULE__, :list_availale_channels do
+      {:ok, channels} -> Enum.find(channels, fn %{"id" => id, "name" => name} -> name == channel_name end)
+    end
+  end
+
+  def handle_call(:list_availale_channels, _from, {token}) do
+    case list(token) do
+      {:ok, channels} -> {:reply, {:ok, channels}, {token, channels}}
+      {:error, e} -> {:reply, {:error, e}, {token}}
+    end
+  end
+
+  def handle_call(:list_availale_channels, _from, {token, channels}) do
+    {:reply, {:ok, channels}, {token, channels}}
+  end
+
   def list(token) do
     query_string = URI.encode_query %{
       token: token,
