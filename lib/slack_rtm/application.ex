@@ -11,6 +11,7 @@ defmodule SlackRtm.Application do
     children = [
       worker(SlackRtm.Rtm, [token]),
       worker(SlackRtm.Channels, [token]),
+      worker(SlackRtm.PostingBot, [token]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
