@@ -1,31 +1,28 @@
 defmodule SlackRtm.PostingBot do
   use GenServer
 
-  def start_link(token) do
-    GenServer.start_link(__MODULE__, token, name: __MODULE__)
+  def start_link(config) do
+    GenServer.start_link(__MODULE__, config, name: __MODULE__)
   end
 
-  def init(token) do
-    {:ok, {token}}
+  def init(config) do
+    {:ok, config}
   end
 
   def post_message(text) do
     GenServer.cast(__MODULE__, {:send, text})
   end
 
-  def handle_cast({:send, text}, {token}) do
-    channel = System.get_env("SLACK_CHANNEL_ID")
-    bot_name = System.get_env("SLACK_BOT_NAME")
-
+  def handle_cast({:send, text}, config) do
     params = [
-      {:token,    token},
-      {:channel,  channel},
+      {:token,    config.token},
+      {:channel,  config.channel},
       {:text,     text},
-      {:username, bot_name},
+      {:username, config.bot_name},
     ]
     uri = "https://slack.com/api/chat.postMessage"
     response = HTTPoison.post(uri, {:form, params})
 
-    {:noreply, {token}}
+    {:noreply, config}
   end
 end

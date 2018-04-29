@@ -5,13 +5,20 @@ defmodule SlackRtm.Application do
 
   use Application
 
-  def start(_type, [token]) do
+  def start(_type, []) do
     import Supervisor.Spec, warn: false
+
+    config = %SlackRtm.Config{
+      token:    System.get_env("SLACK_TOKEN"),
+      channel:  System.get_env("SLACK_CHANNEL"),
+      bot_name: System.get_env("SLACK_BOT_NAME"),
+    }
+
     # List all child processes to be supervised
     children = [
-      worker(SlackRtm.Rtm, [token]),
-      worker(SlackRtm.Channels, [token]),
-      worker(SlackRtm.PostingBot, [token]),
+      worker(SlackRtm.Rtm, [config.token]),
+      worker(SlackRtm.Channels, [config.token]),
+      worker(SlackRtm.PostingBot, [config]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
