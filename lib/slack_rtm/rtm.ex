@@ -28,7 +28,7 @@ defmodule SlackRtm.Rtm do
     uri = "https://slack.com/api/rtm.connect?#{query_string}"
     case HTTPoison.get(uri) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        {:ok, body |> Poison.decode!}
+        body |> Poison.decode
       _ -> {:error, "Authentication failed"}
     end
   end
