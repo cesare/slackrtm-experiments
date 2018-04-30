@@ -6,7 +6,6 @@ defmodule SlackRtm.Listener do
   def loop(websocket) do
     case Socket.Web.recv!(websocket) do
       {:ping, _} ->
-        IO.puts "**** got ping ****"
         websocket |> Socket.Web.send!({:pong, ""})
       message ->
         IO.puts "**** got message: #{inspect message} ****"
