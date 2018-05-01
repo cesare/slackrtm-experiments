@@ -22,6 +22,9 @@ defmodule SlackRtm.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:configparser_ex, "~> 2.0"},
+      {:ex_aws, "~> 2.0"},
+      {:ex_aws_sqs, "~> 2.0"},
       {:httpoison, "~> 1.1"},
       {:poison, "~> 3.1"},
       {:socket, "~> 0.3.13"},
