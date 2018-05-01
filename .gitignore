@@ -23,3 +23,5 @@ erl_crash.dump
 slack_rtm-*.tar
 
 .envrc
+
+config/dev.exs
