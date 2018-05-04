@@ -28,6 +28,7 @@ defmodule SlackRtm.MixProject do
       {:httpoison, "~> 1.1"},
       {:poison, "~> 3.1"},
       {:socket, "~> 0.3.13"},
+      {:sweet_xml, "~> 0.6.5"},
       {:uri, "~> 0.1.0"},
     ]
   end
