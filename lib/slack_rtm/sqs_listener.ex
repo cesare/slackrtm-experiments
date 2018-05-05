@@ -16,7 +16,7 @@ defmodule SlackRtm.SqsListener do
 
   def handle_response({:ok, %{body: body}}) do
     case body do
-      %{messages: [messages]} -> handle_messages(messages)
+      %{messages: [message]} -> handle_message(message)
       %{messages: []} -> IO.puts "**** message empty ****"
     end
   end
@@ -25,10 +25,12 @@ defmodule SlackRtm.SqsListener do
     IO.puts "**** unknown response #{inspect response} ****"
   end
 
-  def handle_messages(messages) do
-    messages
-    |> Enum.each(fn message ->
-      IO.puts "**** received message: #{inspect messages} ****"
-    end)
+  def handle_message(%{body: body_str}) do
+    body = Poison.decode!(body_str)
+    IO.puts "**** received message: #{inspect body} ****"
+  end
+
+  def handle_message(msg) do
+    IO.puts "**** unknown message: #{inspect msg} ****"
   end
 end
