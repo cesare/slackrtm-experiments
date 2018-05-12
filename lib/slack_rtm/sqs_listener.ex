@@ -1,7 +1,10 @@
 defmodule SlackRtm.SqsListener do
   def init() do
+    find_queue_name |> loop
+  end
+
+  def find_queue_name do
     Application.get_env(:slack_rtm, :sqs_queue_name)
-    |> loop
   end
 
   def loop(queue_name) do
@@ -25,12 +28,17 @@ defmodule SlackRtm.SqsListener do
     IO.puts "**** unknown response #{inspect response} ****"
   end
 
-  def handle_message(%{body: body_str}) do
+  def handle_message(%{body: body_str, receipt_handle: receipt_handle}) do
     body = Poison.decode!(body_str)
     IO.puts "**** received message: #{inspect body} ****"
+    delete_message(receipt_handle)
   end
 
   def handle_message(msg) do
     IO.puts "**** unknown message: #{inspect msg} ****"
+  end
+
+  def delete_message(receipt_handle) do
+    find_queue_name |> ExAws.SQS.delete_message(receipt_handle) |> ExAws.request
   end
 end
