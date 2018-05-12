@@ -31,11 +31,16 @@ defmodule SlackRtm.SqsListener do
   def handle_message(%{body: body_str, receipt_handle: receipt_handle}) do
     body = Poison.decode!(body_str)
     IO.puts "**** received message: #{inspect body} ****"
+    handle_message_body(body)
     delete_message(receipt_handle)
   end
 
   def handle_message(msg) do
     IO.puts "**** unknown message: #{inspect msg} ****"
+  end
+
+  def handle_message_body(%{"Message" => text}) do
+    SlackRtm.PostingBot.post_message(text)
   end
 
   def delete_message(receipt_handle) do
