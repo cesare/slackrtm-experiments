@@ -14,11 +14,14 @@ defmodule SlackRtm.Application do
       bot_name: System.get_env("SLACK_BOT_NAME"),
     }
 
+    sqs_queue_name = Application.get_env(:slack_rtm, :sqs_queue_name)
+
     # List all child processes to be supervised
     children = [
       worker(SlackRtm.Rtm, [config.token]),
       worker(SlackRtm.Channels, [config.token]),
       worker(SlackRtm.PostingBot, [config]),
+      worker(SlackRtm.SqsQueueCleaner, [sqs_queue_name]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

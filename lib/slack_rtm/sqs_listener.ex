@@ -44,6 +44,6 @@ defmodule SlackRtm.SqsListener do
   end
 
   def delete_message(receipt_handle) do
-    find_queue_name |> ExAws.SQS.delete_message(receipt_handle) |> ExAws.request
+    SlackRtm.SqsQueueCleaner.delete_message(receipt_handle)
   end
 end
