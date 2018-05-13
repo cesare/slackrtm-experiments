@@ -1,3 +1,3 @@
 defmodule SlackRtm.Config do
-  defstruct [:token, :channel, :bot_name]
+  defstruct [:token, :channel, :bot_name, :sqs]
 end
